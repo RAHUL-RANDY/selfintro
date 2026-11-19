@@ -10,7 +10,8 @@ import {
   MessageSquare,
   Clock,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Phone
 } from 'lucide-react';
 import { personalInfo } from '../data/portfolioData';
 
@@ -35,7 +36,7 @@ export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '',
+    phone: '',
     message: '',
   });
 
@@ -47,13 +48,13 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    if (!formData.name || !formData.email || !formData.phone || !formData.message) return;
 
     setIsSubmitting(true);
     setErrorMessage('');
 
     try {
-      // Send real email directly to Rahul's inbox using FormSubmit AJAX
+      // Send real email directly to Rahul's CIT inbox using FormSubmit AJAX
       const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(personalInfo.email)}`, {
         method: 'POST',
         headers: {
@@ -61,11 +62,11 @@ export default function Contact() {
           'Accept': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject || 'Portfolio Direct Message',
-          message: formData.message,
-          _subject: `New Portfolio Message from ${formData.name}: ${formData.subject || 'Direct Inquiry'}`,
+          'Sender Name': formData.name,
+          'Sender Email': formData.email,
+          'Contact Number': formData.phone,
+          'Message Content': formData.message,
+          _subject: `New Portfolio Message from ${formData.name} [Contact: ${formData.phone}]`,
           _template: 'table',
           _captcha: 'false',
         }),
@@ -75,15 +76,13 @@ export default function Contact() {
 
       if (response.ok || data.success === 'true' || data.success === true) {
         setFormSubmitted(true);
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', message: '' });
       } else {
-        // Still check if it was accepted
         setFormSubmitted(true);
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', phone: '', message: '' });
       }
     } catch (err) {
       console.error('Error submitting form:', err);
-      // Fallback: offer direct mailto if network error occurs
       setErrorMessage('Could not deliver automatically via network. Click below to send directly via your mail client.');
     } finally {
       setIsSubmitting(false);
@@ -91,9 +90,9 @@ export default function Contact() {
   };
 
   const mailtoHref = `mailto:${personalInfo.email}?subject=${encodeURIComponent(
-    formData.subject || 'Portfolio Direct Message'
+    `Portfolio Message from ${formData.name} (${formData.phone})`
   )}&body=${encodeURIComponent(
-    `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+    `Name: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.phone}\n\nMessage:\n${formData.message}`
   )}`;
 
   return (
@@ -220,7 +219,7 @@ export default function Contact() {
                   Send a Direct Message
                 </h3>
                 <p className="text-xs text-neutral-500 mt-0.5">
-                  Delivered straight to Rahul's Gmail ({personalInfo.email}).
+                  Delivered straight to Rahul's CIT inbox ({personalInfo.email}).
                 </p>
               </div>
               <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-mono text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
@@ -242,7 +241,7 @@ export default function Contact() {
                   Message Sent Directly to Rahul's Inbox!
                 </h4>
                 <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed max-w-sm mx-auto">
-                  Thank you! Your message has been forwarded straight to <strong className="font-semibold">{personalInfo.email}</strong>. Rahul will review your note and get back to you shortly.
+                  Thank you! Your message and contact details have been forwarded straight to <strong className="font-semibold">{personalInfo.email}</strong>. Rahul will review your note and get back to you shortly.
                 </p>
                 <div className="pt-2">
                   <button
@@ -302,16 +301,18 @@ export default function Contact() {
                   </div>
                 </div>
 
-                {/* Subject */}
+                {/* Contact Number of the user */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-mono uppercase text-neutral-600 tracking-wider">
-                    Topic / Subject
+                  <label className="text-xs font-mono uppercase text-neutral-600 tracking-wider flex items-center justify-between">
+                    <span>Contact / Phone Number <span className="text-red-500">*</span></span>
+                    <span className="text-[10px] text-neutral-400 font-sans lowercase">phone or whatsapp</span>
                   </label>
                   <input
-                    type="text"
-                    placeholder="e.g. Internship Inquiry / AI Project Discussion"
-                    value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    type="tel"
+                    required
+                    placeholder="e.g. +91 98765 43210"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl bg-neutral-50 border border-neutral-200 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:bg-white transition-all"
                   />
                 </div>
