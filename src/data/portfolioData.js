@@ -12,8 +12,9 @@ export const personalInfo = {
   institution: "Chennai Institute of Technology",
   degree: "B.Tech in Artificial Intelligence & Data Science",
   cgpa: "9.1",
-  emailPlaceholder: "rahul.r.aids@example.com", // Editable placeholder
-  githubPlaceholder: "https://github.com/rahul-r",
+  email: "rahul9486222506@gmail.com",
+  emailPlaceholder: "rahul9486222506@gmail.com",
+  githubPlaceholder: "https://github.com/RAHUL-RANDY",
   linkedinPlaceholder: "https://linkedin.com/in/rahul-r",
   resumeFilename: "Rahul_R_Resume.pdf",
 };
